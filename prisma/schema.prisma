@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  brief       String
+  description String
+  price       Float
+  image       String?
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DataPlan {
+  id         String  @id @default(cuid())
+  network    String  // "mtn" | "airtel" | "glo"
+  planId     Int     // Amigo plan ID
+  capacity   String
+  validity   Int
+  price      Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Agent {
+  id           String  @id @default(cuid())
+  name         String
+  phone        String  @unique
+  pinHash      String
+  balance      Float   @default(0)
+  staticAccount String?
+  approved     Boolean @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  reference     String   @unique
+  type          String   // "product" | "data" | "agent_funding"
+  phone         String
+  amount        Float
+  status        String   // "pending" | "paid" | "delivered" | "failed"
+  productId     String?
+  planId        String?
+  agentId       String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
